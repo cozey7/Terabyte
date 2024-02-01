@@ -39,10 +39,10 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
-import sun.audio.AudioData;
-import sun.audio.AudioPlayer;
-import sun.audio.AudioStream;
-import sun.audio.ContinuousAudioDataStream;
+// import sun.audio.AudioData;
+// import sun.audio.AudioPlayer;
+// import sun.audio.AudioStream;
+// import sun.audio.ContinuousAudioDataStream;
 
 public class Board extends JPanel implements ActionListener, KeyListener {
 	//Fields
