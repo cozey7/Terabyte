@@ -46,6 +46,7 @@ import javax.swing.Timer;
 
 public class Board extends JPanel implements ActionListener, KeyListener {
 	//Fields
+	private String prefix = "../";  // Path prefix for resources
 	private JButton start;
 	ArrayList<Consumable> consumables;
 	private ArrayList<Wall> walls;
@@ -95,12 +96,19 @@ public class Board extends JPanel implements ActionListener, KeyListener {
 		keyPressed = KeyEvent.VK_RIGHT;
 		keyRequest = KeyEvent.VK_RIGHT;
 		gameState = -1;
-
 		try {
-			background = ImageIO.read(new File("board.png"));
+			File boardFile = new File("../board.png");
+			if (!boardFile.exists()) {
+				boardFile = new File("board.png"); // Try root directory
+			}
+			if (!boardFile.exists()) {
+				throw new IOException("Could not find board.png");
+			}
+			background = ImageIO.read(boardFile);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			System.err.println("Error loading board.png: " + e.getMessage());
 			e.printStackTrace();
+			System.exit(1);
 		}
 		walls = new ArrayList<Wall>();
 		consumables = new ArrayList<Consumable>();
@@ -146,13 +154,21 @@ public class Board extends JPanel implements ActionListener, KeyListener {
 	/*
 	 * Author: Michael Chen
 	 * Notes: Spawns the entities on the map
-	 */
-	private void spawnEntities() {
-		pacman = new Pacman(256, 324, "pacmanR.gif", "pacmanL.gif", "pacmanU.gif", "pacmanD.gif");
-		blinky = new Ghost(256, 207, "blinky.png", "blinky.png", "blinky.png", "blinky.png");
-		pinky = new Ghost(220, 270, "pinky.png", "pinky.png", "pinky.png", "pinky.png");
-		inky = new Ghost(256, 270, "inky.png", "inky.png", "inky.png", "inky.png");
-		clyde = new Ghost(292, 270, "clyde.png", "clyde.png", "clyde.png", "clyde.png");
+	 */	private void spawnEntities() {
+		// If files don't exist in parent directory, try current directory
+		if (!new File(prefix + "pacmanR.gif").exists()) {
+			prefix = "";
+		}
+		pacman = new Pacman(256, 324, 
+			prefix + "pacmanR.gif", 
+			prefix + "pacmanL.gif", 
+			prefix + "pacmanU.gif", 
+			prefix + "pacmanD.gif"
+		);
+		blinky = new Ghost(256, 207, prefix + "blinky.png", prefix + "blinky.png", prefix + "blinky.png", prefix + "blinky.png");
+		pinky = new Ghost(220, 270, prefix + "pinky.png", prefix + "pinky.png", prefix + "pinky.png", prefix + "pinky.png");
+		inky = new Ghost(256, 270, prefix + "inky.png", prefix + "inky.png", prefix + "inky.png", prefix + "inky.png");
+		clyde = new Ghost(292, 270, prefix + "clyde.png", prefix + "clyde.png", prefix + "clyde.png", prefix + "clyde.png");
 	}
 
 	/*
@@ -162,9 +178,11 @@ public class Board extends JPanel implements ActionListener, KeyListener {
 	@Override
 	public void actionPerformed(ActionEvent event) {
 		//Pacman controls
-		if (gameState == 0) {
-			if (runtime == 1) {
-				File sirenPath = new File("pacman_siren.wav");
+		if (gameState == 0) {			if (runtime == 1) {
+				File sirenPath = new File(prefix + "pacman_siren.wav");
+				if (!sirenPath.exists()) {
+					sirenPath = new File("pacman_siren.wav");
+				}
 				if (sirenPath.exists()) {
 
 					try {
@@ -204,8 +222,10 @@ public class Board extends JPanel implements ActionListener, KeyListener {
 				pacman.setEnergizedTime(pacman.getEnergizedTime() + 1);
 				if(pacman.getEnergizedTime() == 1) {
 					ghostCombo = 0;
-					clip.stop();
-					File sirenPath = new File("pacman_large_pellet.wav");
+					clip.stop();					File sirenPath = new File(prefix + "pacman_large_pellet.wav");
+					if (!sirenPath.exists()) {
+						sirenPath = new File("pacman_large_pellet.wav");
+					}
 					if (sirenPath.exists()) {
 
 						try {
@@ -218,11 +238,10 @@ public class Board extends JPanel implements ActionListener, KeyListener {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
-					}
-					blinky = new Ghost(blinky.getX(), blinky.getY(), "frightenedGhost.png", "frightenedGhost.png", "frightenedGhost.png", "frightenedGhost.png");
-					pinky = new Ghost(pinky.getX(), pinky.getY(), "frightenedGhost.png", "frightenedGhost.png", "frightenedGhost.png", "frightenedGhost.png");
-					inky = new Ghost(inky.getX(), inky.getY(), "frightenedGhost.png", "frightenedGhost.png", "frightenedGhost.png", "frightenedGhost.png");
-					clyde = new Ghost(clyde.getX(), clyde.getY(), "frightenedGhost.png", "frightenedGhost.png", "frightenedGhost.png", "frightenedGhost.png");
+					}					blinky = new Ghost(blinky.getX(), blinky.getY(), prefix + "frightenedGhost.png", prefix + "frightenedGhost.png", prefix + "frightenedGhost.png", prefix + "frightenedGhost.png");
+					pinky = new Ghost(pinky.getX(), pinky.getY(), prefix + "frightenedGhost.png", prefix + "frightenedGhost.png", prefix + "frightenedGhost.png", prefix + "frightenedGhost.png");
+					inky = new Ghost(inky.getX(), inky.getY(), prefix + "frightenedGhost.png", prefix + "frightenedGhost.png", prefix + "frightenedGhost.png", prefix + "frightenedGhost.png");
+					clyde = new Ghost(clyde.getX(), clyde.getY(), prefix + "frightenedGhost.png", prefix + "frightenedGhost.png", prefix + "frightenedGhost.png", prefix + "frightenedGhost.png");
 					blinky.setVulnerability(true);
 					pinky.setVulnerability(true);
 					inky.setVulnerability(true);
@@ -283,12 +302,10 @@ public class Board extends JPanel implements ActionListener, KeyListener {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
-					}
-
-					blinky = new Ghost(blinky.getX(), blinky.getY(), "blinky.png", "blinky.png", "blinky.png", "blinky.png");
-					pinky = new Ghost(pinky.getX(), pinky.getY(), "pinky.png", "pinky.png", "pinky.png", "pinky.png");
-					inky = new Ghost(inky.getX(), inky.getY(), "inky.png", "inky.png", "inky.png", "inky.png");
-					clyde = new Ghost(clyde.getX(), clyde.getY(), "clyde.png", "clyde.png", "clyde.png", "clyde.png");
+					}					blinky = new Ghost(blinky.getX(), blinky.getY(), prefix + "blinky.png", prefix + "blinky.png", prefix + "blinky.png", prefix + "blinky.png");
+					pinky = new Ghost(pinky.getX(), pinky.getY(), prefix + "pinky.png", prefix + "pinky.png", prefix + "pinky.png", prefix + "pinky.png");
+					inky = new Ghost(inky.getX(), inky.getY(), prefix + "inky.png", prefix + "inky.png", prefix + "inky.png", prefix + "inky.png");
+					clyde = new Ghost(clyde.getX(), clyde.getY(), prefix + "clyde.png", prefix + "clyde.png", prefix + "clyde.png", prefix + "clyde.png");
 					pacman.setPowerPelletEaten(false);
 				}
 			}
@@ -390,14 +407,24 @@ public class Board extends JPanel implements ActionListener, KeyListener {
 				repaint();
 			}
 		}
-		start.setBounds(x + (int)((background.getWidth(null) - 100) * ratio)/2, y + (int)((background.getHeight(null) + 100) * ratio)/2, (int) (100 * ratio), (int) (50 * ratio));
-		try {
-			Font f = Font.createFont(Font.TRUETYPE_FONT, new FileInputStream(new File("Retro Gaming.ttf"))).deriveFont(Font.CENTER_BASELINE, (int)(20 * ratio));
-			g.setFont(f);
-			start.setFont(f);
+		start.setBounds(x + (int)((background.getWidth(null) - 100) * ratio)/2, y + (int)((background.getHeight(null) + 100) * ratio)/2, (int) (100 * ratio), (int) (50 * ratio));		try {
+			File fontFile = new File("../Retro Gaming.ttf");
+			if (!fontFile.exists()) {
+				fontFile = new File("Retro Gaming.ttf"); // Try root directory
+			}
+			if (!fontFile.exists()) {
+				System.err.println("Could not find font file, using default font");
+				g.setFont(g.getFont().deriveFont((int)(20 * ratio)));
+				start.setFont(start.getFont().deriveFont((int)(20 * ratio)));
+			} else {
+				Font f = Font.createFont(Font.TRUETYPE_FONT, new FileInputStream(fontFile)).deriveFont(Font.CENTER_BASELINE, (int)(20 * ratio));
+				g.setFont(f);
+				start.setFont(f);
+			}
 		} catch (FontFormatException | IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.err.println("Error loading font: " + e.getMessage());
+			g.setFont(g.getFont().deriveFont((int)(20 * ratio)));
+			start.setFont(start.getFont().deriveFont((int)(20 * ratio)));
 		}
 		if (lives == 0) {
 			g.setColor(Color.RED);
@@ -422,7 +449,7 @@ public class Board extends JPanel implements ActionListener, KeyListener {
 		g.drawString("HIGH SCORE", (DRAWING_WIDTH - hsWidth) / 2, -50);
 		g.drawString(highScore + "", (DRAWING_WIDTH - hsWidth) / 2, -25);
 		for (int i = 0; i < lives - 1; i++) {
-			g.drawImage(new ImageIcon("pacmanR.png").getImage(), 10 + (38 * i), 610, 28, 30, this);
+			g.drawImage(new ImageIcon(prefix + "pacmanR.png").getImage(), 10 + (38 * i), 610, 28, 30, this);
 		}
 
 		if ((pacman.isColliding(blinky) && (pacman.getEnergizedTime() >=  550 || !blinky.getVulnerabilty())) ||
@@ -711,7 +738,7 @@ public class Board extends JPanel implements ActionListener, KeyListener {
 							count++;
 				if(count == 0 && (x != 270 || y != 340) && (x != 30 || y != 70) 
 						&& (x != 510 || y != 70) && (x != 510 || y != 450) && (x != 30 || y != 450)) {
-					Dot dot = new Dot("dot.png", x, y, 3, 3);
+					Dot dot = new Dot(prefix + "dot.png", x, y, 3, 3);
 					consumables.add(dot);
 				}
 			}

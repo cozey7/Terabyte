@@ -18,10 +18,12 @@ public class EasySound implements Runnable
   private SourceDataLine line = null;
   private byte[] audioBytes;
   private int numBytes;
-
   public EasySound(String fileName)
   {
-    File  soundFile = new File(fileName);
+    File soundFile = new File("../" + fileName);
+    if (!soundFile.exists()) {
+        soundFile = new File(fileName); // Try root directory
+    }
     AudioInputStream audioInputStream = null;
     try
     {
@@ -30,7 +32,7 @@ public class EasySound implements Runnable
     catch (Exception ex)
     {
       System.out.println("*** Cannot find " + fileName + " ***");
-      System.exit(1);
+      return;  // Don't exit, just fail silently
     }
 
     AudioFormat audioFormat = audioInputStream.getFormat();
