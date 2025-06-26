@@ -3,6 +3,8 @@ Team Name: Terabyte
 Team Members: Michael Chen, Clarence Choy, Siqi Ding
 Last Revised: 06/26/2025
 
+<img width="733" alt="image" src="https://github.com/user-attachments/assets/b9e8515c-a9cb-4442-93b5-7e3459165f50" />
+
 Program Purpose: After running this program, users will be able to see and play a game similar to Pacman. There will be a user-controlled character that can move in four different directions. The user tries to escape the “bad guys” while retrieving pellets across the screen to advance levels.
 
 Target User Profile: Our targeted user profile is for anybody who is interested in playing video games or wanting to try it.
